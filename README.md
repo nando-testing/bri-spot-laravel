@@ -1,58 +1,87 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🏦 Portal BRI SPOT KPR (Laravel 11 & MariaDB)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Web Portal Manajemen & Monitoring Alur Berkas Pemohonan KPR (Kredit Pemilikan Rumah) berbasis **Laravel 11**, database **MariaDB / MySQL**, dan tampilan UI **Vanilla CSS / Blade Template** yang modern, rapi, dan responsif.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🌟 Fitur Utama
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. **Sistem Autentikasi & Otorisasi Berbasis Role**:
+   - **SO (Sales Officer)**: Registrasi berkas KPR baru & persiapan pengiriman ke RM.
+   - **RM (Relationship Manager)**: Verifikasi & keputusan berkas KPR yang secara eksklusif ditugaskan di bawah namanya. RM berwenang menggeser status ke seluruh tahap alur KPR.
+   - **CBM (Consumer Business Manager)**: Verifikasi kepemimpinan & persetujuan kelayakan kredit.
+   - **ADK (Administrasi Kredit)**: Pengelolaan akad kredit & input Nomor Rekening Pinjaman.
+   - **Developer Perumahan**: Mode monitoring *real-time* khusus berkas perumahan milik PT Developer tersebut (*Read-Only*).
+   - **Super Admin**: Akses penuh pengelolaan master data & pembuatan akun pegawai baru.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+2. **Pengamanan Wewenang Eksklusif (Dual-Layer Security)**:
+   - Berkas di bawah wewenang pegawai/RM lain otomatis menampilkan tombol terkunci (`🔒 Dibatasi RM Lain` / `🔒 Read-Only`) lengkap dengan tooltip penjelas.
+   - Penolakan di tingkat backend via Eloquent Model (`canEdit`, `canDelete`).
 
-## Learning Laravel
+3. **Floating Toast Popup Notifications**:
+   - Notifikasi melayang di sudut kanan atas dengan indikator ikon, efek animasi *slide-in*, dan *auto-dismiss* 6 detik.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+4. **Formulir Terstruktur & Live Preview**:
+   - Formulir pendaftaran terbagi menjadi 3 seksi visual dengan ikon input.
+   - Live format Rupiah otomatis saat mengedit/mengisi nominal plafon kredit.
+   - Pencarian data live (*live table search*) & Fitur Export Master Data ke CSV.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## 🛠️ Persyaratan Sistem (Requirements)
 
-## Agentic Development
+- **PHP**: 8.2 atau lebih baru
+- **Composer**: 2.x
+- **Database Engine**: MariaDB / MySQL (Port `3306`)
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+---
 
-```bash
-composer require laravel/boost --dev
+## 🚀 Langkah Instalasi & Menjalankan Proyek
 
-php artisan boost:install
-```
+1. **Clone Repositori**:
+   ```bash
+   git clone https://github.com/USERNAME/bri-spot-kpr.git
+   cd bri-spot-kpr
+   ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+2. **Instal Dependensi PHP**:
+   ```bash
+   composer install
+   ```
 
-## Contributing
+3. **Konfigurasi Lingkungan (`.env`)**:
+   Salin `.env.example` ke `.env` dan atur koneksi database MariaDB / MySQL Anda:
+   ```ini
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=bri_spot_kpr
+   DB_USERNAME=root
+   DB_PASSWORD=mysql
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+4. **Generate App Key & Jalankan Migrasi Data**:
+   ```bash
+   php artisan key:generate
+   php artisan migrate:fresh --seed
+   ```
 
-## Code of Conduct
+5. **Jalankan Server Lokal**:
+   ```bash
+   php artisan serve
+   ```
+   Aplikasi dapat diakses di **`http://localhost:8000`**
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 🔑 Akun Demo Bawaan Seeder
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+| Username | Password | Role Jabatan | Keterangan |
+| :--- | :--- | :--- | :--- |
+| `budi_so` | `123456` | Sales Officer (SO) | Pendaftaran berkas KPR baru |
+| `rina_rm` | `123456` | RM Penanggung Jawab | Berkas di bawah nama Rina Wijaya |
+| `doni_rm` | `123456` | RM Penanggung Jawab | Berkas di bawah nama Doni Pratama |
+| `hendra_cbm` | `123456` | CBM | Verifikasi keputusan kredit |
+| `dewi_adk` | `123456` | ADK | Akad & Nomor Rekening Pinjaman |
+| `ciputra_dev` | `123456` | Developer Perumahan | Monitoring PT. Ciputra (Read-Only) |
+| `admin` | `123456` | Super Admin | Akses administratif penuh |
