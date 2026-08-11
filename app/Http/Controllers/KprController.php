@@ -14,7 +14,7 @@ class KprController extends Controller
     public function index(Request $request)
     {
         if (!Auth::check()) {
-            return redirect()->route('login')->with('info', 'Silakan login terlebih dahulu untuk mengakses Portal BRI SPOT KPR.');
+            return redirect()->route('login')->with('info', 'Silakan login terlebih dahulu untuk mengakses Digital Flow Portal.');
         }
 
         $user = Auth::user();
@@ -26,12 +26,25 @@ class KprController extends Controller
 
         // 1. Filter Tabel 1 (Tugas Role Aktif Sesuai Alur Jabatan)
         $table1Raw = $allKprList->filter(function ($item) use ($activeRole, $user) {
+            // Apabila status telah 'Selesai', tidak lagi ditampilkan di Tabel 1 karena tugas telah selesai
+            if (in_array($item->status, ['Selesai', 'Input Nomor Rekening Pinjaman'])) {
+                return false;
+            }
+
             if ($activeRole === 'Developer Perumahan') return false; // Developer hanya mode monitoring di Tabel 2
             if ($activeRole === 'Super Admin') return true;
 
             if ($activeRole === 'SO') {
-                // SO mengelola berkas tahap registrasi & persiapan pengiriman ke RM
-                return in_array($item->status, ['Collect Data', 'Proses RM']);
+                // SO HANYA bisa lihat data yang dia input pada Tabel 1 sesuai rolenya
+                $loggedName = strtolower(trim($user->name));
+                $petugas = strtolower(trim($item->nama_petugas ?? ''));
+
+                $cleanLogged = preg_replace('/,?\s*(s\.e\.|s\.h\.|s\.t\.|m\.m\.)/i', '', $loggedName);
+                $cleanPetugas = preg_replace('/,?\s*(s\.e\.|s\.h\.|s\.t\.|m\.m\.)/i', '', $petugas);
+
+                $isSameUser = ($cleanLogged && $cleanPetugas && str_contains($cleanPetugas, $cleanLogged)) || ($petugas === $loggedName);
+
+                return $isSameUser && in_array($item->status, ['Collect Data', 'Proses RM']);
             }
 
             if ($activeRole === 'RM') {
@@ -45,15 +58,19 @@ class KprController extends Controller
             }
 
             if ($activeRole === 'ADK') {
-                // ADK mengelola berkas tahap verifikasi CBM, proses akad, & input nomor rekening
-                return in_array($item->status, ['Verifikasi CBM', 'Proses Akad ADK', 'Input Nomor Rekening Pinjaman']);
+                // ADK mengelola berkas tahap verifikasi CBM & proses akad
+                return in_array($item->status, ['Verifikasi CBM', 'Proses Akad ADK']);
             }
 
             return true;
         });
 
-        // 2. Filter Tabel 2 (Real Master Data KPR - Filtering Khusus Developer)
+        // 2. Filter Tabel 2 (Real Master Data KPR - SO TIDAK BISA lihat master data)
         $table2Raw = $allKprList->filter(function ($item) use ($activeRole, $currentUserName) {
+            if ($activeRole === 'SO') {
+                return false; // SO tidak bisa lihat master data
+            }
+
             if ($activeRole === 'Developer Perumahan') {
                 $devUser = strtolower(trim($currentUserName));
                 $itemDev = strtolower(trim($item->nama_developer ?? ''));
@@ -132,7 +149,7 @@ class KprController extends Controller
             'nomor_rekening' => $request->nomor_rekening ?: '',
         ]);
 
-        return back()->with('success', "Berkas KPR baru a.n {$request->nama_debitur} berhasil diregister ke MariaDB!");
+        return back()->with('success', "Berkas KPR baru a.n {$request->nama_debitur} berhasil diregister!");
     }
 
     public function update(Request $request, $id)
@@ -201,14 +218,14 @@ class KprController extends Controller
         $user = Auth::user();
         $kpr = KprRecord::findOrFail($id);
 
-        // Validasi Hak Akses Hapus Berdasarkan Role
+        // Validasi Hak Akses Hapus Berdasarkan Role (Hanya Super Admin)
         if (!$kpr->canDelete($user)) {
-            return back()->with('error', $kpr->getRestrictionReason($user));
+            return back()->with('error', "Hanya Super Admin yang berwenang menghapus berkas KPR.");
         }
 
         $kpr->delete();
 
-        return back()->with('info', "Berkas KPR a.n {$kpr->nama_debitur} telah dihapus dari Database.");
+        return back()->with('info', "Berkas KPR a.n {$kpr->nama_debitur} telah berhasil dihapus.");
     }
 
     public function exportCsv()

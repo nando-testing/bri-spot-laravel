@@ -98,39 +98,12 @@ class KprRecord extends Model
     }
 
     /**
-     * Memeriksa apakah user berwenang MENGHAPUS berkas ini
+     * Memeriksa apakah user berwenang MENGHAPUS berkas ini (Hanya Super Admin)
      */
     public function canDelete($user)
     {
         if (!$user) return false;
-        $role = $user->role ?? 'SO';
-
-        if ($role === 'Super Admin') {
-            return true;
-        }
-
-        if ($role === 'Developer Perumahan') {
-            return false; // Strictly Read-Only
-        }
-
-        if ($role === 'SO') {
-            // SO hanya dapat menghapus berkas yang didaftarkan oleh SO tersebut pada tahap Collect Data / Proses RM
-            $isCreator = strtolower(trim($this->nama_petugas)) === strtolower(trim($user->name));
-            $isInitialStage = in_array($this->status, ['Collect Data', 'Proses RM']);
-            return $isCreator && $isInitialStage;
-        }
-
-        if ($role === 'RM') {
-            // RM HANYA dapat menghapus berkas milik dirinya sendiri
-            return $this->isAssignedToRm($user);
-        }
-
-        if ($role === 'CBM' || $role === 'ADK') {
-            // CBM dan ADK bertugas memverifikasi/mengisi akad, tidak untuk menghapus berkas dari master
-            return false;
-        }
-
-        return false;
+        return ($user->role ?? '') === 'Super Admin';
     }
 
     /**

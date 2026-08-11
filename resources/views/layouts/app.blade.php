@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'BRI SPOT - Monitoring Register KPR')</title>
+    <title>@yield('title', 'Digital Flow - Monitoring Alur berkas KPR')</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -70,21 +70,23 @@
             background: #FFFFFF;
             color: #00529C;
             font-weight: 900;
-            padding: 0.3rem 0.6rem;
-            border-radius: 6px;
-            font-size: 1.1rem;
-            letter-spacing: 0.05em;
+            padding: 0.35rem 0.75rem;
+            border-radius: 8px;
+            font-size: 1.15rem;
+            letter-spacing: 0.04em;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
 
         .brand-title-group h1 {
-            font-size: 1.05rem;
+            font-size: 1.15rem;
             font-weight: 800;
             line-height: 1.1;
         }
 
         .brand-title-group p {
-            font-size: 0.72rem;
-            opacity: 0.85;
+            font-size: 0.75rem;
+            opacity: 0.9;
+            font-weight: 500;
         }
 
         .header-right {
@@ -157,9 +159,7 @@
             padding: 1.25rem;
         }
 
-        /* ========================================================
-           FLOATING TOAST NOTIFICATION POPUP (MELAYANG DI KANAN ATAS)
-           ======================================================== */
+        /* FLOATING TOAST NOTIFICATION POPUP */
         .toast-container {
             position: fixed;
             top: 80px;
@@ -299,10 +299,10 @@
     <header class="app-header">
         <div class="header-content">
             <div class="brand-group">
-                <div class="brand-logo-badge">BRI</div>
+                <div class="brand-logo-badge">DFlow</div>
                 <div class="brand-title-group">
-                    <h1>BRI SPOT KPR Portal</h1>
-                    <p>Sistem Register & Monitoring Alur Berkas KPR (MariaDB Database)</p>
+                    <h1>Digital Flow</h1>
+                    <p>Monitoring Alur berkas KPR</p>
                 </div>
             </div>
 
@@ -312,7 +312,7 @@
                     <span class="user-name">{{ Auth::user()->name }}</span>
                 </div>
 
-                @if(in_array(Auth::user()->role, ['Super Admin', 'SO', 'RM']))
+                @if(Auth::user()->role === 'Super Admin')
                 <button type="button" class="btn-header-action" onclick="document.getElementById('registerUserModal').style.display='flex'">
                     + Akun Pegawai
                 </button>
@@ -372,7 +372,7 @@
 
     <!-- FOOTER -->
     <footer class="app-footer">
-        <p>BRI SPOT KPR Portal &copy; 2026 PT. Bank Rakyat Indonesia (Persero) Tbk. Powered by Laravel 11 & MariaDB.</p>
+        <p>Digital Flow &copy; 2026 PT. Bank Rakyat Indonesia (Persero) Tbk. Monitoring Alur berkas KPR.</p>
     </footer>
 
     <script>

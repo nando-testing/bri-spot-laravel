@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Login - BRI SPOT KPR Portal')
+@section('title', 'Login - Digital Flow')
 
 @section('styles')
 <style>
@@ -35,20 +35,21 @@
         font-weight: 900;
         padding: 0.4rem 1.25rem;
         border-radius: 8px;
-        letter-spacing: 0.1em;
+        letter-spacing: 0.05em;
         margin-bottom: 0.75rem;
     }
 
     .login-header h2 {
-        font-size: 1.25rem;
+        font-size: 1.35rem;
         font-weight: 800;
         color: #0F172A;
     }
 
     .login-header p {
-        font-size: 0.8rem;
+        font-size: 0.82rem;
         color: #64748B;
         margin-top: 0.25rem;
+        font-weight: 500;
     }
 
     .form-group {
@@ -144,9 +145,9 @@
 <div class="login-wrapper">
     <div class="login-card">
         <div class="login-header">
-            <div class="login-brand-badge">BRI</div>
-            <h2>BRI SPOT KPR Portal</h2>
-            <p>Sistem Manajemen & Monitoring Alur Berkas KPR (MariaDB)</p>
+            <div class="login-brand-badge">DFlow</div>
+            <h2>Digital Flow</h2>
+            <p>Monitoring Alur berkas KPR</p>
         </div>
 
         <form action="{{ route('login.post') }}" method="POST">
@@ -161,7 +162,7 @@
                 <input type="password" id="password_input" name="password" class="form-input" placeholder="Masukkan password" value="123456" required>
             </div>
 
-            <button type="submit" class="btn-submit">Masuk Ke Portal</button>
+            <button type="submit" class="btn-submit">Masuk Ke Digital Flow</button>
         </form>
 
         <div class="demo-buttons-title">— Pilihan Akun Demo (Klik Langsung) —</div>
