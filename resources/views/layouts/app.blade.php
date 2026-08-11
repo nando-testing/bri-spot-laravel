@@ -92,7 +92,7 @@
         .header-right {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.65rem;
         }
 
         .user-badge {
@@ -122,11 +122,11 @@
         }
 
         .btn-header-action {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
             color: white;
-            border: none;
+            border: 1px solid rgba(255, 255, 255, 0.25);
             padding: 0.45rem 0.85rem;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 0.78rem;
             font-weight: 700;
             cursor: pointer;
@@ -134,11 +134,14 @@
             display: inline-flex;
             align-items: center;
             gap: 0.35rem;
+            text-decoration: none;
         }
 
-        .btn-header-action:hover {
+        .btn-header-action:hover, .btn-header-action.active-nav {
             background: white;
             color: var(--primary-dark);
+            border-color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
 
         /* MAIN CONTAINER */
@@ -280,6 +283,7 @@
             .header-right {
                 width: 100%;
                 justify-content: space-between;
+                flex-wrap: wrap;
             }
             .toast-container {
                 top: auto;
@@ -307,6 +311,13 @@
             </div>
 
             <div class="header-right">
+                <a href="{{ route('kpr.index') }}" class="btn-header-action {{ request()->routeIs('kpr.index') ? 'active-nav' : '' }}">
+                    🏠 Alur KPR
+                </a>
+                <a href="{{ route('debitur.index') }}" class="btn-header-action {{ request()->routeIs('debitur.index') ? 'active-nav' : '' }}">
+                    📑 Master Debitur (Excel)
+                </a>
+
                 <div class="user-badge">
                     <span class="user-role-tag">{{ Auth::user()->role }}</span>
                     <span class="user-name">{{ Auth::user()->name }}</span>
@@ -314,7 +325,7 @@
 
                 @if(Auth::user()->role === 'Super Admin')
                 <button type="button" class="btn-header-action" onclick="document.getElementById('registerUserModal').style.display='flex'">
-                    + Akun Pegawai
+                    + Akun
                 </button>
                 @endif
 
