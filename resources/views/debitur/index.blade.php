@@ -127,21 +127,28 @@
     .kol-2 { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
     .kol-3 { background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; }
 
-    .btn-detail {
-        background: #00529C;
+    .btn-detail-page {
+        background: linear-gradient(135deg, #00529C 0%, #003B73 100%);
         color: white;
         border: none;
-        padding: 0.35rem 0.75rem;
-        border-radius: 6px;
-        font-size: 0.75rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        font-size: 0.76rem;
         font-weight: 700;
-        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
         transition: all 0.2s;
+        box-shadow: 0 2px 6px rgba(0, 82, 156, 0.2);
         white-space: nowrap;
     }
-    .btn-detail:hover {
-        background: #003B73;
+
+    .btn-detail-page:hover {
+        opacity: 0.95;
         transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 82, 156, 0.3);
+        color: white;
     }
 
     .readonly-badge {
@@ -208,49 +215,6 @@
         opacity: 0.5;
         cursor: not-allowed;
     }
-
-    /* MODAL DETAIL 48 KOLOM */
-    .detail-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 0.85rem;
-        margin-bottom: 1.25rem;
-    }
-
-    .detail-item {
-        background: #F8FAFC;
-        border: 1px solid #E2E8F0;
-        padding: 0.65rem 0.85rem;
-        border-radius: 8px;
-    }
-
-    .detail-label {
-        font-size: 0.68rem;
-        font-weight: 700;
-        color: #64748B;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        margin-bottom: 0.2rem;
-    }
-
-    .detail-val {
-        font-size: 0.84rem;
-        font-weight: 700;
-        color: #0F172A;
-        word-break: break-word;
-    }
-
-    .section-header-modal {
-        font-size: 0.8rem;
-        font-weight: 800;
-        color: #00529C;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        padding-bottom: 0.35rem;
-        border-bottom: 1.5px solid #E2E8F0;
-        margin-top: 1.25rem;
-        margin-bottom: 0.85rem;
-    }
 </style>
 @section('content')
 
@@ -291,7 +255,7 @@
                     <th>Jangka Waktu</th>
                     <th>Kol ADK</th>
                     <th>PN Pengelola</th>
-                    <th style="text-align: right;">Detail Lengkap</th>
+                    <th style="text-align: right;">Aksi Detail</th>
                 </tr>
             </thead>
             <tbody>
@@ -315,9 +279,9 @@
                     </td>
                     <td><span style="font-size:0.72rem; color:#334155;">{{ $d->pn_pengelola_singlepn ?: '-' }}</span></td>
                     <td style="text-align: right;">
-                        <button class="btn-detail" onclick="openDetailModal({{ json_encode($d) }})">
-                            🔍 Detail 48 Kolom
-                        </button>
+                        <a href="{{ route('debitur.show', $d->id) }}" class="btn-detail-page">
+                            🔍 Halaman Detail
+                        </a>
                     </td>
                 </tr>
                 @empty
@@ -338,111 +302,12 @@
     </div>
 </div>
 
-<!-- ===================================================
-     MODAL DETAIL LENGKAP 48 KOLOM DEBITUR
-     =================================================== -->
-<div id="detailDebiturModal" class="modal-overlay">
-    <div class="modal-card" style="max-width: 880px;">
-        <div class="modal-header">
-            <div class="modal-title-group">
-                <h3>📋 Detail Lengkap 48 Kolom Debitur</h3>
-                <p id="modalDebiturSubtitle">Informasi atribut lengkap ter-import dari lw_debitur.xlsx</p>
-            </div>
-            <button type="button" class="modal-close-btn" onclick="closeDetailModal()">✕</button>
-        </div>
-
-        <div id="detailModalBody">
-            <!-- DYNAMICALLY POPULATED VIA JS -->
-        </div>
-
-        <div class="modal-footer-actions">
-            <button type="button" class="btn-modal-cancel" onclick="closeDetailModal()">Tutup</button>
-        </div>
-    </div>
-</div>
-
 @endsection
 
 @section('scripts')
 <script>
 const PAGE_SIZE = 10;
 let currentPage = 1;
-
-function openDetailModal(item) {
-    document.getElementById('modalDebiturSubtitle').textContent = `Debitur: ${item.nama_debitur} | No. Rekening: ${item.nomor_rekening}`;
-    
-    const body = document.getElementById('detailModalBody');
-    body.innerHTML = `
-        <div class="section-header-modal">🏢 1. Informasi Wilayah & Unit Kerja</div>
-        <div class="detail-grid">
-            <div class="detail-item"><div class="detail-label">PERIODE</div><div class="detail-val">${item.periode || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">KODE KANWIL & KANWIL</div><div class="detail-val">${item.kode_kanwil || ''} - ${item.kanwil || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">KODE KANCA & KANCA</div><div class="detail-val">${item.kode_kanca || ''} - ${item.kanca || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">KODE UKER & UKER</div><div class="detail-val">${item.kode_uker || ''} - ${item.uker || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">CURRENCY</div><div class="detail-val">${item.currency || 'IDR'}</div></div>
-            <div class="detail-item"><div class="detail-label">CIFNO</div><div class="detail-val">${item.cifno || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">SEGMEN LV1 & DESC</div><div class="detail-val">${item.segmen_lv1 || ''} - ${item.desc_segmen_lv1 || '-'}</div></div>
-        </div>
-
-        <div class="section-header-modal">👤 2. Identitas Debitur & Rekening</div>
-        <div class="detail-grid">
-            <div class="detail-item"><div class="detail-label">NAMA DEBITUR</div><div class="detail-val">${item.nama_debitur || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">NOMOR REKENING</div><div class="detail-val" style="font-family:monospace; font-weight:800; color:#00529C;">${item.nomor_rekening || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">LN TYPE</div><div class="detail-val">${item.ln_type || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">CODE & DESCRIPTION</div><div class="detail-val">${item.code || ''} - ${item.description || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">FLAG RESTRUK</div><div class="detail-val">${item.flag_restruk || '-'}</div></div>
-        </div>
-
-        <div class="section-header-modal">💰 3. Plafon, Saldo Baki Debet & Keuangan</div>
-        <div class="detail-grid">
-            <div class="detail-item"><div class="detail-label">PLAFON (M)</div><div class="detail-val" style="color:#10B981;">Rp ${parseFloat(item.plafon || 0).toLocaleString('id-ID')}</div></div>
-            <div class="detail-item"><div class="detail-label">PLAFON DALAM IDR (AV)</div><div class="detail-val" style="color:#10B981;">Rp ${parseFloat(item.plafon_dalam_idr || 0).toLocaleString('id-ID')}</div></div>
-            <div class="detail-item"><div class="detail-label">BALANCE / BAKI DEBET (AW)</div><div class="detail-val" style="color:#00529C;">Rp ${parseFloat(item.balance_dalam_idr || 0).toLocaleString('id-ID')}</div></div>
-            <div class="detail-item"><div class="detail-label">RATE SUKU BUNGA (%)</div><div class="detail-val">${parseFloat(item.rate || 0).toFixed(2)}%</div></div>
-            <div class="detail-item"><div class="detail-label">TGL REALISASI (R)</div><div class="detail-val">${item.tgl_realisasi || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">TGL JATUH TEMPO (S)</div><div class="detail-val">${item.tgl_jatuh_tempo || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">JANGKA WAKTU (T)</div><div class="detail-val">${item.jangka_waktu || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">NEXT PMT DATE (N)</div><div class="detail-val">${item.next_pmt_date || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">NEXT INT PMT DATE (O)</div><div class="detail-val">${item.next_int_pmt_date || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">FREQ PAYMENT (AE)</div><div class="detail-val">${item.freq_payment || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">FREQ INT PAYMENT (AF)</div><div class="detail-val">${item.freq_int_payment || '-'}</div></div>
-        </div>
-
-        <div class="section-header-modal">📊 4. Kolektabilitas & Tunggakan</div>
-        <div class="detail-grid">
-            <div class="detail-item"><div class="detail-label">KOL ADK (AK)</div><div class="detail-val">Kol ${item.kol_adk || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">KOLEKTABILITAS LANCAR (W)</div><div class="detail-val">Rp ${parseFloat(item.kolektabilitas_lancar || 0).toLocaleString('id-ID')}</div></div>
-            <div class="detail-item"><div class="detail-label">KOLEKTABILITAS DPK (X)</div><div class="detail-val">Rp ${parseFloat(item.kolektabilitas_dpk || 0).toLocaleString('id-ID')}</div></div>
-            <div class="detail-item"><div class="detail-label">KOLEKTABILITAS KURANG LANCAR (Y)</div><div class="detail-val">Rp ${parseFloat(item.kolektabilitas_kurang_lancar || 0).toLocaleString('id-ID')}</div></div>
-            <div class="detail-item"><div class="detail-label">KOLEKTABILITAS DIRAGUKAN (Z)</div><div class="detail-val">Rp ${parseFloat(item.kolektabilitas_diragukan || 0).toLocaleString('id-ID')}</div></div>
-            <div class="detail-item"><div class="detail-label">KOLEKTABILITAS MACET (AA)</div><div class="detail-val">Rp ${parseFloat(item.kolektabilitas_macet || 0).toLocaleString('id-ID')}</div></div>
-            <div class="detail-item"><div class="detail-label">TUNGGAKAN POKOK (AB)</div><div class="detail-val">Rp ${parseFloat(item.tunggakan_pokok || 0).toLocaleString('id-ID')}</div></div>
-            <div class="detail-item"><div class="detail-label">TUNGGAKAN BUNGA (AC)</div><div class="detail-val">Rp ${parseFloat(item.tunggakan_bunga || 0).toLocaleString('id-ID')}</div></div>
-            <div class="detail-item"><div class="detail-label">TUNGGAKAN PINALTI (AD)</div><div class="detail-val">Rp ${parseFloat(item.tunggakan_pinalti || 0).toLocaleString('id-ID')}</div></div>
-            <div class="detail-item"><div class="detail-label">TGL MENUNGGAK (Q)</div><div class="detail-val">${item.tgl_menunggak || '-'}</div></div>
-        </div>
-
-        <div class="section-header-modal">👨‍💼 5. Pegawai & Officer Penanggung Jawab (PN)</div>
-        <div class="detail-grid">
-            <div class="detail-item"><div class="detail-label">PN PENGELOLA SINGLEPN (AL)</div><div class="detail-val">${item.pn_pengelola_singlepn || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">PN PENGELOLA 1 (AM)</div><div class="detail-val">${item.pn_pengelola_1 || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">PN PENGELOLA 2 (AQ)</div><div class="detail-val">${item.pn_pengelola_2 || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">PN PEMRAKARSA (AN)</div><div class="detail-val">${item.pn_pemrakarsa || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">PN PEMUTUS (AR)</div><div class="detail-val">${item.pn_pemutus || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">PN REFERRAL (AO)</div><div class="detail-val">${item.pn_referral || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">PN RESTRUK (AP)</div><div class="detail-val">${item.pn_restruk || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">PN CRM (AS)</div><div class="detail-val">${item.pn_crm || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">PN RM REFERRAL NAIK SEGMENTASI (AT)</div><div class="detail-val">${item.pn_rm_referral_naik_segmentasi || '-'}</div></div>
-            <div class="detail-item"><div class="detail-label">PN RM CRR (AU)</div><div class="detail-val">${item.pn_rm_crr || '-'}</div></div>
-        </div>
-    `;
-
-    document.getElementById('detailDebiturModal').style.display = 'flex';
-}
-
-function closeDetailModal() {
-    document.getElementById('detailDebiturModal').style.display = 'none';
-}
 
 function filterDebiturTable() {
     currentPage = 1;

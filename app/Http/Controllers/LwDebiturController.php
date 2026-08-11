@@ -22,4 +22,17 @@ class LwDebiturController extends Controller
 
         return view('debitur.index', compact('user', 'activeRole', 'debiturList'));
     }
+
+    public function show($id)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('info', 'Silakan login terlebih dahulu.');
+        }
+
+        $user = Auth::user();
+        $activeRole = $user->role ?? 'SO';
+        $debitur = LwDebitur::findOrFail($id);
+
+        return view('debitur.show', compact('user', 'activeRole', 'debitur'));
+    }
 }

@@ -14,8 +14,12 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Protected Routes (Harus Login)
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [KprController::class, 'index'])->name('kpr.index');
-    Route::get('/master-debitur', [LwDebiturController::class, 'index'])->name('debitur.index');
     
+    // Master Debitur LW Routes
+    Route::get('/master-debitur', [LwDebiturController::class, 'index'])->name('debitur.index');
+    Route::get('/master-debitur/{id}', [LwDebiturController::class, 'show'])->name('debitur.show');
+    
+    // KPR Dashboard Routes
     Route::post('/kpr/store', [KprController::class, 'store'])->name('kpr.store');
     Route::post('/kpr/{id}/update', [KprController::class, 'update'])->name('kpr.update');
     Route::post('/kpr/{id}/status', [KprController::class, 'updateStatus'])->name('kpr.status');
